@@ -58,13 +58,14 @@ public final class ConfigurationLoader {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
 
-    CrawlerConfiguration deserializedConfig;
+    CrawlerConfiguration deserializedConfig = null;
 
     try {
 //      https://fasterxml.github.io/jackson-databind/javadoc/2.7/com/fasterxml/jackson/databind/ObjectMapper.html#readValue(java.io.Reader,%20java.lang.Class)
       deserializedConfig = objectMapper.readValue(reader, CrawlerConfiguration.Builder.class).build();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+//      throw new RuntimeException(e);
+      e.printStackTrace();
     }
     System.out.println("Deserialized Config: " + deserializedConfig);
 
