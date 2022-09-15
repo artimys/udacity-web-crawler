@@ -33,9 +33,9 @@ final class WordCounts {
             .stream()
             .sorted(new WordCountComparator())
             .limit(Math.min(popularWordCount, wordCounts.size()))
-            .collect(Collectors.toMap(Map.Entry::getKey,
-                                      Map.Entry::getValue,
-                                      (k, v) -> v,
+            .collect(Collectors.toMap(Map.Entry::getKey,   // Method reference for key
+                                      Map.Entry::getValue, // Method reference for value
+                                      (a, b) -> b,      // Clashing keys, take the newest which is b
                                       LinkedHashMap::new
             ));
 /*
