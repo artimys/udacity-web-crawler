@@ -31,7 +31,7 @@ public final class ConfigurationLoader {
    */
   public CrawlerConfiguration load() {
 
-    // TODO: Fill in this method.
+    // DONE: Fill in this method.
     try (Reader configReader = Files.newBufferedReader(this.path)) {
       return read(configReader);
     } catch (IOException e) {
@@ -52,7 +52,7 @@ public final class ConfigurationLoader {
     Objects.requireNonNull(reader);
 
 
-    // TODO: Fill in this method
+    // DONE: Fill in this method
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.disable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
 

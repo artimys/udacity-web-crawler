@@ -54,7 +54,7 @@ final class ParallelWebCrawler implements WebCrawler {
     Instant deadline = clock.instant().plus(timeout);
 
     // Change to synconization
-    // TODO - arty - sync.
+    // FIXME - arty - sync.
     Map<String, Integer> counts = new HashMap<>();
     Set<String> visitedUrls = new HashSet<>();
 
@@ -90,7 +90,7 @@ final class ParallelWebCrawler implements WebCrawler {
     private final String url;
     private final Instant deadline;
     private final int maxDepth;
-    // TODO - arty sync both objects below
+    // FIXME - arty sync both objects below
     private final Map<String, Integer> counts;
     private final Set<String> visitedUrls;
 
@@ -119,7 +119,7 @@ final class ParallelWebCrawler implements WebCrawler {
         }
       }
 
-      // TODO - arty - legacy code
+      // FIXME - arty - legacy code
       if (visitedUrls.contains(url)) {
         return;
       }

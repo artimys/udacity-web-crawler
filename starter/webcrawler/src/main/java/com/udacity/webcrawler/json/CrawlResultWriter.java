@@ -45,7 +45,7 @@ public final class CrawlResultWriter {
     // This is here to get rid of the unused variable warning.
     Objects.requireNonNull(writer);
 
-    // TODO: Fill in this method.
+    // DONE: Fill in this method.
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
     objectMapper.writeValue(writer, this.result);

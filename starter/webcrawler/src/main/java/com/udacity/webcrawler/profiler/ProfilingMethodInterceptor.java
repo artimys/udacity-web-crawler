@@ -34,6 +34,11 @@ final class ProfilingMethodInterceptor implements InvocationHandler {
     //       methods, the interceptor should record how long the method call took, using the
     //       ProfilingState methods.
 
+    // FIXME - look into:
+    // Think carefully about how the proxy should behave for the
+    // java.lang.Object#equals(Object) method.
+    // Reading the InvocationHandler documentation will be very helpful.
+
     Object result;
     // Method has @profiled annotation
     boolean methodIsProfiled = method.getAnnotation(Profiled.class) != null;
