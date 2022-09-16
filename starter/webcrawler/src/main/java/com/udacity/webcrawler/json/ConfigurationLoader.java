@@ -37,8 +37,6 @@ public final class ConfigurationLoader {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-
-    //return new CrawlerConfiguration.Builder().build();
   }
 
   /**
@@ -62,12 +60,9 @@ public final class ConfigurationLoader {
 //      https://fasterxml.github.io/jackson-databind/javadoc/2.7/com/fasterxml/jackson/databind/ObjectMapper.html#readValue(java.io.Reader,%20java.lang.Class)
       deserializedConfig = objectMapper.readValue(reader, CrawlerConfiguration.Builder.class).build();
     } catch (IOException e) {
-//      throw new RuntimeException(e);
       e.printStackTrace();
     }
-    System.out.println("Deserialized Config: " + deserializedConfig);
 
-    //return new CrawlerConfiguration.Builder().build();
     return deserializedConfig;
   }
 }

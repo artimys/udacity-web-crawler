@@ -12,6 +12,7 @@ import com.udacity.webcrawler.profiler.ProfilerModule;
 
 import javax.inject.Inject;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Path;
@@ -39,23 +40,32 @@ public final class WebCrawlerMain {
 
     // DONE: Write the crawl results to a JSON file (or System.out if the file name is empty)
     if (config.getResultPath().isBlank()) {
-      // result path is empty
+//      try (OutputStreamWriter osw = new OutputStreamWriter(System.out)) {
+        OutputStreamWriter osw = new OutputStreamWriter(System.out);
+        osw.write("Arty Results: \n");
+        resultWriter.write(osw);
+        // FIXME - closing this stream prevents bottom writer from printing
+        osw.flush();
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//      }
+    } else {
       Path resultPath = Path.of(config.getResultPath());
       resultWriter.write(resultPath);
-    } else {
-      // create Path object from result path
-      System.out.println(resultWriter.toString());
     }
 
 
     // DONE: Write the profile data to a text file (or System.out if the file name is empty)
     if (config.getProfileOutputPath().isBlank()) {
-      // result path is empty
-      Path resultPath = Path.of(config.getProfileOutputPath());
-      profiler.writeData(resultPath);
+      try (OutputStreamWriter owsProfile = new OutputStreamWriter(System.out)) {
+        owsProfile.write("ARty Profile: \n");
+        owsProfile.write(profiler.toString());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     } else {
-      // create Path object from result path
-      System.out.println(profiler.toString());
+      Path profilePath = Path.of(config.getProfileOutputPath());
+      profiler.writeData(profilePath);
     }
   }
 
