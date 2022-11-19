@@ -1,0 +1,80 @@
+Written Questions
+
+Q1. Run the web crawler using the configurations located at src/main/config/written_question_1a.json and
+    src/main/config/written_question_1b.json. The only difference between these configurations is that one always uses
+    the sequential crawler and the other always uses the parallel crawler. Inspect the profile output in
+    profileData.txt.
+
+    If you are using a multi-processor computer, you should notice that SequentialWebCrawler#crawl and
+    ParallelWebCrawler#crawl took about the same amount of time, but PageParserImpl#parse took much longer when run with
+    the ParallelWebCrawler.
+
+    Why did the parser take more time when run with ParallelWebCrawler?
+
+    The ParallelWebCrawler took longer to parse because it has more urls to visit compared to the SequentialWebCrawler.
+    The Parallel crawler visited 388 urls vs 32 urls visited by the Sequential crawler.
+
+
+
+
+Q2. Your manager ran your crawler on her old personal computer, using the configurations from Q1, and she notices that
+    the sequential crawler actually outperforms the parallel crawler. She would like to know why.
+
+    (a) Suggest one reason why the sequential web crawler was able to read more web pages than the parallel crawler.
+        (Hint: Try setting "parallelism" to 1 in the JSON configs to simulate your manager's computer.)
+
+        Setting "parallelism" to 1 to simulate my manager's computer would mean that they are running the crawler on a computer with 1 core.  All the thread work the Parallel crawler is doing is for nothing as it consumes the machine's CPU and memory only to then run work on a single core.
+
+    (b) Suggest one scenario in which the parallel web crawler will almost certainly perform better than the sequential
+        crawler. Why will it perform better?
+
+        If the machine had multiple cores, the Parallel crawer can take advantage of additional cores to process more tasks to get more work done.
+
+
+
+Q3. Analyze your method profiler through the lens of Aspect Oriented Programming, by answering the following questions:
+
+    (a) What cross-cutting concern is being addressed by the com.udacity.webcrawler.profiler.Profiler class?
+
+    Performance Profiling
+
+    (b) What are the join points of the Profiler in the web crawler program?
+
+    Joint points are places where Advice connects into the code. In this case the ProfilingMethodInterceptor intercepts methods that are annotated with the @Profiled annotation.
+
+
+
+Q4. Identify three (3) different design patterns used in this project, and explain which interfaces, classes, and/or
+    libraries use or implement those design patterns.
+
+    For each pattern, name one thing about the pattern that you LIKED, and one thing you DISLIKED. If you did not like
+    anything, you can name two things you disliked.
+
+    1) Dynamic Proxy
+    The Dynamic Proxy is returned from ProfilerImpl. It wraps the delegate object using ProfilingMethodInterceptor.
+
+    I like this pattern because it allows opening an object to add other functionality during runtime, like performance profile or logging.
+    I dislike the confusion when writing out the Proxy.newProxyInstance(arg, arg, arg) syntax.
+
+
+    2) Builder Pattern
+    Used by CrawlerConfiguration, CrawlResult, ParserModule, and PargeParser.
+
+    I like that it allows a class to have lots of arguments for a constructer but make it flexible enough to build out complex constructors. Easier to read when instantiating the object.
+
+    I like dislike that it makes the Class a lot longer to read through in code by adding the Builder class inside it.
+
+
+    3) Dependency Injection
+    A lot of class/interfaces are referenced for DI by annotating it with @Inject. For example:
+    - PageParserFactoryImpl
+    - ProfilerImpl
+    - PageParserFactory
+    - ParallelWebCrawler
+    - SequentialWebCrawler
+
+    Specifically when the WebCrawlerMain class runs, WebCrawler and Profiler are automatically injected.
+
+    I like that instead of creating the objects manually, The Dependency Injection framework can create objects or import libraries for you. It also becomes modular by switching out dependency objects when testing.
+
+    I dislike that it requires a package to work. The one for the WebCrawler project uses Guice.

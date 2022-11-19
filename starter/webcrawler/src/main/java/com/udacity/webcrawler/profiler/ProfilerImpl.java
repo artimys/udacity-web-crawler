@@ -44,7 +44,7 @@ final class ProfilerImpl implements Profiler {
     Method[] methods = klass.getDeclaredMethods();
     boolean klassHasProfiledAnnotation = Arrays.stream(methods).anyMatch(m -> m.isAnnotationPresent(Profiled.class));
     if (!klassHasProfiledAnnotation) {
-      throw new IllegalArgumentException("Class must include method with @profiled annotation");
+      throw new IllegalArgumentException("Class must include method with @Profiled annotation");
     }
 
     // Wrap class

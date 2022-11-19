@@ -1,6 +1,7 @@
 {
   "startPages": ["https://www.udacity.com/"],
   "ignoredWords": ["^.{1,3}$"],
+  "parallelism": 1,
   "implementationOverride": "com.udacity.webcrawler.SequentialWebCrawler",
   "maxDepth": 10,
   "timeoutSeconds": 7,
