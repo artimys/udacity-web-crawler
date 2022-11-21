@@ -122,14 +122,14 @@ final class ParallelWebCrawler implements WebCrawler {
         }
       }
 
-//      if (!visitedUrls.add(url)) {
-//        return;
-//      }
-      // Replaced legacy code with code above
-      if (visitedUrls.contains(url)) {
+      if (!visitedUrls.add(url)) {
         return;
       }
-      visitedUrls.add(url);
+      // Replaced legacy code with code above
+//      if (visitedUrls.contains(url)) {
+//        return;
+//      }
+//      visitedUrls.add(url);
 
 
 
