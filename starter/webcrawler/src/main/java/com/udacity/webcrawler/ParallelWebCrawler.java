@@ -10,9 +10,7 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -53,10 +51,13 @@ final class ParallelWebCrawler implements WebCrawler {
   public CrawlResult crawl(List<String> startingUrls) {
     Instant deadline = clock.instant().plus(timeout);
 
-    // Change to synconization
-    // FIXME - arty - sync.
-    Map<String, Integer> counts = new HashMap<>();
-    Set<String> visitedUrls = new HashSet<>();
+    // Switched to synchronization
+//    Map<String, Integer> counts = new HashMap<>();
+//    Set<String> visitedUrls = new HashSet<>();
+    // https://docs.oracle.com/javase/10/docs/api/java/util/concurrent/package-summary.html
+    ConcurrentHashMap<String, Integer> counts = new ConcurrentHashMap<>();
+    ConcurrentSkipListSet<String> visitedUrls = new ConcurrentSkipListSet<>();
+
 
     for (String url : startingUrls) {
       crawlInternalTask internalTask = new crawlInternalTask(url, deadline, this.maxDepth, counts, visitedUrls);
@@ -90,16 +91,18 @@ final class ParallelWebCrawler implements WebCrawler {
     private final String url;
     private final Instant deadline;
     private final int maxDepth;
-    // FIXME - arty sync both objects below
-    private final Map<String, Integer> counts;
-    private final Set<String> visitedUrls;
+
+    // arty - Sync both objects below
+    // https://docs.oracle.com/javase/10/docs/api/java/util/concurrent/package-summary.html
+    private final ConcurrentHashMap<String, Integer> counts;
+    private final ConcurrentSkipListSet<String> visitedUrls;
 
     // this.clock and this.ignoredUrls are available globally;
     // If this class is moved to its own file, pass variables to constructor.
     // private final Clock clock;
     // private final List<Pattern> ignoredUrls;
 
-    public crawlInternalTask(String url, Instant deadline, int maxDepth, Map<String, Integer> counts, Set<String> visitedUrls) {
+    public crawlInternalTask(String url, Instant deadline, int maxDepth, ConcurrentHashMap<String, Integer> counts, ConcurrentSkipListSet<String> visitedUrls) {
       this.url = url;
       this.deadline = deadline;
       this.maxDepth = maxDepth;
@@ -119,19 +122,31 @@ final class ParallelWebCrawler implements WebCrawler {
         }
       }
 
-      // FIXME - arty - legacy code
+//      if (!visitedUrls.add(url)) {
+//        return;
+//      }
+      // Replaced legacy code with code above
       if (visitedUrls.contains(url)) {
         return;
       }
       visitedUrls.add(url);
+
+
+
       PageParser.Result result = parserFactory.get(url).parse();
 
-      for (Map.Entry<String, Integer> e : result.getWordCounts().entrySet()) {
-        if (counts.containsKey(e.getKey())) {
-          counts.put(e.getKey(), e.getValue() + counts.get(e.getKey()));
-        } else {
-          counts.put(e.getKey(), e.getValue());
-        }
+      for (ConcurrentHashMap.Entry<String, Integer> e : result.getWordCounts().entrySet()) {
+
+        counts.compute(e.getKey(),
+                      (k,v) -> (v == null ? e.getValue() : e.getValue() + v)
+        );
+
+        // If condition below is not thread safe, replaced all lines with .compute above
+        //if (counts.containsKey(e.getKey())) {
+        //  counts.put(e.getKey(), e.getValue() + counts.get(e.getKey()));
+        //} else {
+        //  counts.put(e.getKey(), e.getValue());
+        //}
       }
 
       List<crawlInternalTask> subTasks = new ArrayList<>();
